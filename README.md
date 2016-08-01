@@ -21,7 +21,7 @@ The efficiency was tested
 
 ####1. Change variables to setup Ansible
 
-[config/ansible/group_vars/all.yml]()
+[config/ansible/group_vars/all.yml](https://github.com/Miicky/rails-react-es6-ansible-capistrano/blob/master/config/ansible/group_vars/all.yml)
 * ruby_version
 * name - application name (use to create folder)
 * node_version - like in package.json
@@ -58,7 +58,7 @@ $ ansible-playbook -i SERVER_IP, playbook.yml
 ```
 
 ####4. Change variables to setup Capistrano
-[config/deploy.rb]()
+[config/deploy.rb](https://github.com/Miicky/rails-react-es6-ansible-capistrano/blob/master/config/deploy.rb)
 Server is ready for deploying through Capistrano
 But after initial setup Capistrano, you need to change the variables according to the ansible variables
 
