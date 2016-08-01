@@ -1,0 +1,17 @@
+---
+- name: 'nginx | check config'
+  command: 'test -f /{{ nginx_enabled }}/{{ name }}.conf'
+  register: 'nginx_config_copied'
+  ignore_errors: yes
+
+- name: 'nginx | createdir'
+  shell: 'rm /{{ nginx_enabled }}/default; mkdir -p {{ nginx_enabled }}/'
+  when: 'nginx_config_copied|failed'
+
+- name: 'nginx | copy config'
+  template: 'src=configs/nginx.conf dest=/{{ nginx_enabled }}/{{ name }}.conf owner=root group=root mode=0644'
+  when: 'nginx_config_copied|failed'
+
+- name: 'nginx | restart service'
+  service: name=nginx state=restarted
+  when: 'nginx_config_copied|failed'

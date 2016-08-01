@@ -1,0 +1,6 @@
+staging:
+  adapter: postgresql
+  host: localhost
+  database: {{ db.name }}
+  username: {{ db.user }}
+  password: {{ db.password }}

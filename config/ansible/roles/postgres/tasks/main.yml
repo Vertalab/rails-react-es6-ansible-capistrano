@@ -1,0 +1,33 @@
+---
+- name: 'postgresql | check user'
+  shell: 'psql -U postgres -c "\copyright"'
+  register: 'postgres_login'
+  ignore_errors: yes
+
+- name: 'postgresql | set auth type'
+  copy: 'src=configs/pg_hba.conf dest=/etc/postgresql/9.3/main/pg_hba.conf owner=postgres group=postgres mode=0644'
+  when: 'postgres_login|failed'
+
+- name: 'postgresql | restart service'
+  service: name=postgresql state=restarted
+  when: 'postgres_login|failed'
+
+- name: 'postgresql | create shared directory'
+  shell: 'mkdir -p {{ shared }} -m 775 && chown -R {{ user }}:{{ user }} /var/www/'
+  when: 'postgres_login|failed'
+
+- name: 'postgresql | copy database.yml'
+  template: 'src=configs/database.yml dest={{ shared }}/database.yml owner={{ user }} group={{ user }} mode=0644'
+  when: 'postgres_login|failed'
+
+- name: 'postgresql | create database'
+  shell: 'createdb -U postgres -O postgres -E UTF8 -l en_US.UTF-8 {{ name }}_staging'
+  when: 'postgres_login|failed'
+
+- name: ensure user has access to database
+  postgresql_user: db={{db.name}} name={{db.user}} password={{db.password}} priv=ALL
+  tags: post
+
+- name: ensure user does not have unnecessary privilege
+  postgresql_user: name={{db.user}} role_attr_flags=NOSUPERUSER,CREATEDB
+  tags: post

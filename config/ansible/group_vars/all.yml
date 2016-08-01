@@ -1,0 +1,36 @@
+group: 'deploy'
+ruby_version: '2.3.1'
+user: 'deploy'
+home: "/home/{{ user }}"
+rbenv_root: "{{ home }}/.rbenv"
+name: 'application_name'
+application: "/var/www/{{ name }}"
+shared: "{{ application }}/shared/config"
+nginx_enabled: 'etc/nginx/sites-enabled'
+nvm:
+  user: deploy
+  version: v0.31.3
+  node_version: '6.3.0'
+db:
+  name: "db_name"
+  user: "db_user"
+  password: 'db_pass'
+dependencies:
+  - 'build-essential'
+  - 'libssl-dev'
+  - 'libyaml-dev'
+  - 'libreadline6-dev'
+  - 'zlib1g-dev'
+  - 'libcurl4-openssl-dev'
+  - 'git'
+  - 'nginx'
+  - 'redis-server'
+  - 'postgresql'
+  - 'postgresql-contrib'
+  - 'libpq-dev'
+  - 'imagemagick'
+  - 'libmagickwand-dev'
+  - 'nodejs'
+  - 'htop'
+  - 'python-psycopg2'
+  - 'mc'

@@ -1,0 +1,57 @@
+# if you rebuild server and want run again
+  # $ sudo nano /Users/USER/.ssh/known_hosts
+  # and delete row with ip-server
+# to run init
+# $ ansible-playbook -i SERVER IP, init_user.yml
+---
+- hosts: 'all'
+  remote_user: 'root'
+  become: true
+
+  tasks:
+    # Check available host
+    - name: ping all hosts
+      ping:
+
+    # Creating new deploy user
+    - name: Create group
+      group: name={{ group }} state=present
+
+    - name: Create user
+      user: name={{ user }} state=present group={{ group }} shell=/bin/bash
+
+    - name: Ensure sudoers.d is enabled
+      lineinfile: dest=/etc/sudoers state=present backup=yes regexp='^#includedir /etc/sudoers.d' line='#includedir /etc/sudoers.d'
+
+    - name: Set up password-less sudo for user
+      copy: content="%{{ user }} ALL=(ALL) NOPASSWD:ALL" dest="/etc/sudoers.d/{{ user }}" owner=root group=root mode=0440
+
+    - name: Add auth key
+      authorized_key: user="{{ user }}" key="{{ item }}"
+      with_file:
+        - keys/id_rsa.pub
+        # add your new pub key here
+
+     #if remove root access
+    - name: Remove root SSH access
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+        state: present
+
+    - name: Remove password SSH access
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+
+    - name: Restart sshd
+      service:
+        name: 'ssh'
+        state: 'restarted'
+
+    #update cache
+    - name: 'apt | update'
+      action: 'apt update_cache=yes'

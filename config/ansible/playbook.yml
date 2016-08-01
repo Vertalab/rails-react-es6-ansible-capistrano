@@ -1,0 +1,15 @@
+# ansible-playbook -i '46.101.135.233, ' playbook.yml
+---
+- hosts: all
+  remote_user: deploy
+  gather_facts: yes
+  become: yes
+  become_method: sudo
+
+  roles:
+    - { role: dependencies }
+    - { role: rbenv }
+    - { role: postgres }
+    - { role: nginx }
+    - { role: node }
+    - { role: else }

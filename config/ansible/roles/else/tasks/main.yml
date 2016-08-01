@@ -1,0 +1,30 @@
+---
+- name: 'rails | copy secrets.yml'
+  copy: 'src=configs/secrets.yml dest={{ shared }}/secrets.yml owner={{ user }} group={{ user }} mode=0644'
+
+- name: set rbenv chmod
+  command: sudo chmod -R 777 /home/deploy/.rbenv/
+  tags:
+    - bund
+- name: Install bundler gem
+  shell: cd ~ ; bash -lic 'gem install bundler --no-ri --no-rdoc'
+  become_user: "{{ user }}"
+  when: ruby_installed.rc != 0
+
+- name: Run rbenv rehash
+  shell: cd ~ ; bash -lic 'rbenv rehash'
+  become_user: "{{ user }}"
+  when: ruby_installed.rc != 0
+
+  #if server DgitalOcean dont install locale
+- name: install the locales package
+  apt: pkg=locales state=present
+
+- name: ensure the locale exists
+  command: /usr/sbin/locale-gen
+
+- name: Add mappings to /etc/environment
+  lineinfile:
+    dest: /etc/environment
+    line: "LC_ALL=\"en_GB.utf8\""
+    insertafter: EOF

@@ -1,0 +1,14 @@
+---
+- name: ping all hosts
+  ping:
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Safe aptitude upgrade
+  apt: upgrade=safe
+  async: 600
+  poll: 5
+
+- name: Install rails package dependencies
+  apt: name={{ item }} state=present
+  with_items: "{{ dependencies }}"
