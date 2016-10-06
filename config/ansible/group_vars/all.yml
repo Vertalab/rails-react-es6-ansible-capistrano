@@ -2,6 +2,7 @@ group: 'deploy'
 ruby_version: '2.3.1'
 user: 'deploy'
 home: "/home/{{ user }}"
+env: 'staging'
 rbenv_root: "{{ home }}/.rbenv"
 name: 'application_name'
 application: "/var/www/{{ name }}"
@@ -10,9 +11,9 @@ nginx_enabled: 'etc/nginx/sites-enabled'
 nvm:
   user: deploy
   version: v0.31.3
-  node_version: '6.3.0'
+  node_version: '6.7.0'
 db:
-  name: "db_name"
+  name: "db_name_{{env}}"
   user: "db_user"
   password: 'db_pass'
 dependencies:

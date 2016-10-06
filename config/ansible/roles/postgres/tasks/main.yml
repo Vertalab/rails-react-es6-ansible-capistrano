@@ -21,7 +21,7 @@
   when: 'postgres_login|failed'
 
 - name: 'postgresql | create database'
-  shell: 'createdb -U postgres -O postgres -E UTF8 -l en_US.UTF-8 {{ name }}_staging'
+  shell: 'createdb -U postgres -O postgres -E UTF8 -l en_US.UTF-8 {{ db.name }}'
   when: 'postgres_login|failed'
 
 - name: ensure user has access to database
